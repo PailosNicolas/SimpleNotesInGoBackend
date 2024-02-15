@@ -15,7 +15,8 @@ import (
 )
 
 type apiConfig struct {
-	DB *database.Queries
+	DB        *database.Queries
+	jwtSecret string
 }
 
 func main() {
@@ -29,7 +30,8 @@ func main() {
 	}
 
 	config := apiConfig{
-		DB: database.New(db),
+		DB:        database.New(db),
+		jwtSecret: os.Getenv("JWT_SECRET"),
 	}
 
 	port := os.Getenv("PORT")
@@ -39,6 +41,7 @@ func main() {
 
 	// Users
 	r.Post("/users/", config.HandlerCreateNewUser)
+	r.Post("/login/", config.HandlerLogin)
 
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }

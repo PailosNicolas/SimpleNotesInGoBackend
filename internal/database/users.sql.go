@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -15,7 +16,7 @@ import (
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (id, created_at, updated_at, username, password)
 VALUES ($1, $2, $3, $4, $5)
-RETURNING id, created_at, updated_at, username, password
+RETURNING id, created_at, updated_at, username, password, token, refresh_token
 `
 
 type CreateUserParams struct {
@@ -41,12 +42,14 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.UpdatedAt,
 		&i.Username,
 		&i.Password,
+		&i.Token,
+		&i.RefreshToken,
 	)
 	return i, err
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, created_at, updated_at, username, password
+SELECT id, created_at, updated_at, username, password, token, refresh_token
 FROM users
 WHERE id = $1
 `
@@ -60,6 +63,57 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.UpdatedAt,
 		&i.Username,
 		&i.Password,
+		&i.Token,
+		&i.RefreshToken,
+	)
+	return i, err
+}
+
+const getUserByUsername = `-- name: GetUserByUsername :one
+SELECT id, created_at, updated_at, username, password, token, refresh_token
+FROM users
+WHERE username = $1
+`
+
+func (q *Queries) GetUserByUsername(ctx context.Context, username string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUsername, username)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Username,
+		&i.Password,
+		&i.Token,
+		&i.RefreshToken,
+	)
+	return i, err
+}
+
+const updateTokens = `-- name: UpdateTokens :one
+UPDATE users
+SET token = $1, refresh_token = $2
+WHERE id = $3
+RETURNING id, created_at, updated_at, username, password, token, refresh_token
+`
+
+type UpdateTokensParams struct {
+	Token        sql.NullString
+	RefreshToken sql.NullString
+	ID           uuid.UUID
+}
+
+func (q *Queries) UpdateTokens(ctx context.Context, arg UpdateTokensParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateTokens, arg.Token, arg.RefreshToken, arg.ID)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Username,
+		&i.Password,
+		&i.Token,
+		&i.RefreshToken,
 	)
 	return i, err
 }

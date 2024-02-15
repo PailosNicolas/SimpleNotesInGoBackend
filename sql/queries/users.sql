@@ -7,3 +7,14 @@ RETURNING *;
 SELECT *
 FROM users
 WHERE id = $1;
+
+-- name: GetUserByUsername :one
+SELECT *
+FROM users
+WHERE username = $1;
+
+-- name: UpdateTokens :one
+UPDATE users
+SET token = $1, refresh_token = $2
+WHERE id = $3
+RETURNING *;

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -51,5 +52,69 @@ func (cfg *apiConfig) HandlerCreateNewUser(w http.ResponseWriter, r *http.Reques
 	}
 
 	helpers.RespondWithJSON(w, http.StatusOK, newUser.GetUserDTO())
+
+}
+
+func (cfg *apiConfig) HandlerLogin(w http.ResponseWriter, r *http.Request) {
+	type parameters struct {
+		Username string `json:"username"`
+		Password string `json:"password"`
+	}
+	type loginResponse struct {
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+
+	err := decoder.Decode(&params)
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error decoding parameters")
+		return
+	}
+
+	if params.Username == "" || params.Password == "" {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Missing parameters.")
+		return
+	}
+
+	user, err := cfg.DB.GetUserByUsername(r.Context(), params.Username)
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Wrong username or password.")
+		return
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(params.Password))
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Wrong username or password.")
+		return
+	}
+
+	accToken, RefToken, err := helpers.GetJWTTokenFromUser(&user, cfg.jwtSecret)
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error generating tokens.")
+		return
+	}
+
+	cfg.DB.UpdateTokens(r.Context(), database.UpdateTokensParams{
+		Token: sql.NullString{
+			String: accToken,
+			Valid:  true,
+		},
+		RefreshToken: sql.NullString{
+			String: RefToken,
+			Valid:  true,
+		},
+		ID: user.ID,
+	})
+
+	helpers.RespondWithJSON(w, http.StatusOK, loginResponse{
+		AccessToken:  accToken,
+		RefreshToken: RefToken,
+	})
 
 }
