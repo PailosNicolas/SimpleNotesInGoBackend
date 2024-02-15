@@ -22,3 +22,5 @@ go.work
 Dockerfile
 .devcontainer/devcontainer.json
 .vscode/launch.json
+.env
+SimpleNotesInGoBackend
