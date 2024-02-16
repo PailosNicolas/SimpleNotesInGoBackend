@@ -43,5 +43,8 @@ func main() {
 	r.Post("/users/", config.HandlerCreateNewUser)
 	r.Post("/login/", config.HandlerLogin)
 
+	// Notes
+	r.Post("/notes/", config.middlewareAuth(config.HandlerCreateNote))
+
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }

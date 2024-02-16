@@ -21,3 +21,21 @@ func (u *User) GetUserDTO() UserDTO {
 		Username:  u.Username,
 	}
 }
+
+type NoteDTO struct {
+	ID        uuid.UUID `json:"id"`
+	Title     string    `json:"title"`
+	Body      string    `json:"body"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (n *Note) GetNoteDTO() NoteDTO {
+	return NoteDTO{
+		ID:        n.ID,
+		Title:     n.Title,
+		Body:      n.Body,
+		CreatedAt: n.CreatedAt,
+		UpdatedAt: n.UpdatedAt,
+	}
+}
