@@ -47,3 +47,61 @@ func (q *Queries) CreateNote(ctx context.Context, arg CreateNoteParams) (Note, e
 	)
 	return i, err
 }
+
+const getNoteById = `-- name: GetNoteById :one
+SELECT id, title, body, user_id, created_at, updated_at
+FROM notes
+WHERE id=$1 AND user_id=$2
+`
+
+type GetNoteByIdParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) GetNoteById(ctx context.Context, arg GetNoteByIdParams) (Note, error) {
+	row := q.db.QueryRowContext(ctx, getNoteById, arg.ID, arg.UserID)
+	var i Note
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Body,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateNoteTitleBody = `-- name: UpdateNoteTitleBody :one
+UPDATE notes
+SET title = $1, body = $2, updated_at = $3
+WHERE id = $4
+RETURNING id, title, body, user_id, created_at, updated_at
+`
+
+type UpdateNoteTitleBodyParams struct {
+	Title     string
+	Body      string
+	UpdatedAt time.Time
+	ID        uuid.UUID
+}
+
+func (q *Queries) UpdateNoteTitleBody(ctx context.Context, arg UpdateNoteTitleBodyParams) (Note, error) {
+	row := q.db.QueryRowContext(ctx, updateNoteTitleBody,
+		arg.Title,
+		arg.Body,
+		arg.UpdatedAt,
+		arg.ID,
+	)
+	var i Note
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Body,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
