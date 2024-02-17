@@ -46,6 +46,7 @@ func main() {
 	// Notes
 	r.Post("/notes/", config.middlewareAuth(config.HandlerCreateNote))
 	r.Put("/notes/", config.middlewareAuth(config.HandlerUpdateNote))
+	r.Get("/notes/", config.middlewareAuth(config.HandlerGetNote))
 
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }

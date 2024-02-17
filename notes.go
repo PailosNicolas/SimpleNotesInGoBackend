@@ -101,3 +101,17 @@ func (cfg *apiConfig) HandlerUpdateNote(w http.ResponseWriter, r *http.Request, 
 
 	helpers.RespondWithJSON(w, http.StatusOK, updatedNote.GetDTO())
 }
+
+func (cfg *apiConfig) HandlerGetNote(w http.ResponseWriter, r *http.Request, user database.User) {
+
+	notes, err := cfg.DB.GetNotesByUser(r.Context(), user.ID)
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error getting notes")
+		return
+	}
+
+	notesSlice := database.GetNoteSliceDTO(notes)
+
+	helpers.RespondWithJSON(w, http.StatusOK, notesSlice)
+}
