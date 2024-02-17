@@ -43,3 +43,19 @@ func (n *Note) GetDTO() interface{} {
 		UpdatedAt: n.UpdatedAt,
 	}
 }
+
+func GetDTOs(dtos []DTO) []interface{} { // unused for now
+	var result []interface{}
+	for _, dto := range dtos {
+		result = append(result, dto.GetDTO())
+	}
+	return result
+}
+
+func GetNoteSliceDTO(notes []Note) []interface{} {
+	var result []interface{}
+	for _, dto := range notes {
+		result = append(result, dto.GetDTO())
+	}
+	return result
+}
