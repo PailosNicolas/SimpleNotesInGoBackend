@@ -97,3 +97,31 @@ Response:
   "updated_at": "2024-02-16T21:24:11.729657Z"
 }
 ```
+
+### `GET /notes/`:
+Gets every note of the user via `access_token`, auth via `Bearer token` using the `access_token`.
+
+Authentication: Bearer Token
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2Nlc3MiLCJzdWIiOiJiMDNlMDlhZS04NTgyLTQyZWEtYTk1Yy0xZjJjNGJkMzU4MDIiLCJleHAiOjE3MDgxMjE5MzMsImlhdCI6MTcwODExODMzM30.n14uHTZZ2UhflG5mRG1Xxy1eYo0UPNgJ-0MRczQD0Sg
+```
+
+Response:
+```json
+[
+  {
+    "id": "4d184f67-d7ce-4488-ae5f-873fc59fc429",
+    "title": "new note",
+    "body": "This is the new note body",
+    "created_at": "2024-02-17T20:08:12.332014Z",
+    "updated_at": "2024-02-17T20:08:23.12217Z"
+  },
+  {
+    "id": "3ffd00c9-016a-4b60-aa00-e6598eecdae1",
+    "title": "Note  2",
+    "body": "This is the note body 2",
+    "created_at": "2024-02-17T21:03:54.815386Z",
+    "updated_at": "2024-02-17T21:03:54.815386Z"
+  }
+]
+```
