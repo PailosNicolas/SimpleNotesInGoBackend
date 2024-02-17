@@ -6,6 +6,10 @@ import (
 	"github.com/google/uuid"
 )
 
+type DTO interface {
+	GetDTO() interface{}
+}
+
 type UserDTO struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -13,7 +17,7 @@ type UserDTO struct {
 	Username  string    `json:"username"`
 }
 
-func (u *User) GetUserDTO() UserDTO {
+func (u *User) GetDTO() interface{} {
 	return UserDTO{
 		ID:        u.ID,
 		CreatedAt: u.CreatedAt,
@@ -30,7 +34,7 @@ type NoteDTO struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func (n *Note) GetNoteDTO() NoteDTO {
+func (n *Note) GetDTO() interface{} {
 	return NoteDTO{
 		ID:        n.ID,
 		Title:     n.Title,
