@@ -44,7 +44,7 @@ func (cfg *apiConfig) HandlerCreateNote(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	helpers.RespondWithJSON(w, http.StatusCreated, note.GetNoteDTO())
+	helpers.RespondWithJSON(w, http.StatusCreated, note.GetDTO())
 }
 
 func (cfg *apiConfig) HandlerUpdateNote(w http.ResponseWriter, r *http.Request, user database.User) {
@@ -99,5 +99,5 @@ func (cfg *apiConfig) HandlerUpdateNote(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	helpers.RespondWithJSON(w, http.StatusOK, updatedNote.GetNoteDTO())
+	helpers.RespondWithJSON(w, http.StatusOK, updatedNote.GetDTO())
 }

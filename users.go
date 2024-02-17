@@ -51,7 +51,7 @@ func (cfg *apiConfig) HandlerCreateNewUser(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	helpers.RespondWithJSON(w, http.StatusOK, newUser.GetUserDTO())
+	helpers.RespondWithJSON(w, http.StatusOK, newUser.GetDTO())
 
 }
 
