@@ -17,4 +17,5 @@ WHERE id=$1 AND user_id=$2;
 -- name: GetNotesByUser :many
 SELECT *
 FROM notes
-WHERE user_id=$1;
+WHERE user_id=$1
+ORDER BY created_at DESC;
