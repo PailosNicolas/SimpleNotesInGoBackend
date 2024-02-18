@@ -130,7 +130,7 @@ Response:
     },
     {
       "id": "4d184f67-d7ce-4488-ae5f-873fc59fc429",
-      "title": "asdasd",
+      "title": "New note",
       "body": "This is the new note body",
       "created_at": "2024-02-17T20:08:12.332014Z",
       "updated_at": "2024-02-17T20:08:23.12217Z"
