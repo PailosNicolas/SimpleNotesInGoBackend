@@ -77,6 +77,7 @@ const getNotesByUser = `-- name: GetNotesByUser :many
 SELECT id, title, body, user_id, created_at, updated_at
 FROM notes
 WHERE user_id=$1
+ORDER BY created_at DESC
 `
 
 func (q *Queries) GetNotesByUser(ctx context.Context, userID uuid.UUID) ([]Note, error) {

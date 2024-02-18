@@ -103,6 +103,14 @@ func (cfg *apiConfig) HandlerUpdateNote(w http.ResponseWriter, r *http.Request, 
 }
 
 func (cfg *apiConfig) HandlerGetNote(w http.ResponseWriter, r *http.Request, user database.User) {
+	decoder := json.NewDecoder(r.Body)
+	params := helpers.PaginationParams{}
+
+	err := decoder.Decode(&params)
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error decoding parameters")
+		return
+	}
 
 	notes, err := cfg.DB.GetNotesByUser(r.Context(), user.ID)
 
@@ -111,7 +119,10 @@ func (cfg *apiConfig) HandlerGetNote(w http.ResponseWriter, r *http.Request, use
 		return
 	}
 
-	notesSlice := database.GetNoteSliceDTO(notes)
+	paginatedNotes := helpers.PaginateResult(database.GetNoteSliceDTO(notes), helpers.PaginationParams{
+		Page:     params.Page,
+		PageSize: params.PageSize,
+	})
 
-	helpers.RespondWithJSON(w, http.StatusOK, notesSlice)
+	helpers.RespondWithJSON(w, http.StatusOK, paginatedNotes)
 }
