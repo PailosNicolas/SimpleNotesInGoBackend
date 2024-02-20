@@ -99,7 +99,7 @@ Response:
 ```
 
 ### `GET /notes/`:
-Gets every note of the user via `access_token` paginated., auth via `Bearer token` using the `access_token`.
+Gets every note of the user via `access_token` paginated, auth via `Bearer token` using the `access_token`.
 
 Authentication: Bearer Token
 ```
@@ -136,5 +136,28 @@ Response:
       "updated_at": "2024-02-17T20:08:23.12217Z"
     }
   ]
+}
+```
+
+### `POST /categories/`:
+Creates a note category, auth via `Bearer token` using the `access_token`.
+
+Authentication: Bearer Token
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2Nlc3MiLCJzdWIiOiJiMDNlMDlhZS04NTgyLTQyZWEtYTk1Yy0xZjJjNGJkMzU4MDIiLCJleHAiOjE3MDgxMjE5MzMsImlhdCI6MTcwODExODMzM30.n14uHTZZ2UhflG5mRG1Xxy1eYo0UPNgJ-0MRczQD0Sg
+```
+
+Body:
+```json
+{
+  "name": "Work"
+}
+```
+
+Response:
+```json
+{
+  "ID": "96363d02-c080-40a2-b454-105e3f755d5b",
+  "Name": "Work"
 }
 ```

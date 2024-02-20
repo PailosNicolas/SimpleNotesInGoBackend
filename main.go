@@ -48,5 +48,8 @@ func main() {
 	r.Put("/notes/", config.middlewareAuth(config.HandlerUpdateNote))
 	r.Get("/notes/", config.middlewareAuth(config.HandlerGetNote))
 
+	// Categories
+	r.Post("/categories/", config.middlewareAuth(config.HandlerCreateCategory))
+
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }
