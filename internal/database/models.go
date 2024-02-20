@@ -11,6 +11,12 @@ import (
 	"github.com/google/uuid"
 )
 
+type Category struct {
+	ID     uuid.UUID
+	Name   string
+	UserID uuid.UUID
+}
+
 type Note struct {
 	ID        uuid.UUID
 	Title     string
@@ -18,6 +24,11 @@ type Note struct {
 	UserID    uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+type NoteCategory struct {
+	NoteID     uuid.UUID
+	CategoryID uuid.UUID
 }
 
 type User struct {

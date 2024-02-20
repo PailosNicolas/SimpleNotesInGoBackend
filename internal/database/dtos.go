@@ -44,6 +44,18 @@ func (n *Note) GetDTO() interface{} {
 	}
 }
 
+type CategoryDTO struct {
+	ID   uuid.UUID
+	Name string
+}
+
+func (c *Category) GetDTO() interface{} {
+	return CategoryDTO{
+		ID:   c.ID,
+		Name: c.Name,
+	}
+}
+
 func GetDTOs(dtos []DTO) []interface{} { // unused for now
 	var result []interface{}
 	for _, dto := range dtos {
