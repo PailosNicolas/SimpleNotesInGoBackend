@@ -20,6 +20,13 @@ func PaginateResult(items []interface{}, params PaginationParams) PaginatedResul
 		endIndex = len(items)
 	}
 
+	if startIndex > endIndex {
+		startIndex = endIndex - params.PageSize
+		if startIndex < 0 {
+			startIndex = 0
+		}
+	}
+
 	paginatedItems := items[startIndex:endIndex]
 
 	return PaginatedResult{
