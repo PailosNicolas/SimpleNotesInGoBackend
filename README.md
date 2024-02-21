@@ -161,3 +161,38 @@ Response:
   "Name": "Work"
 }
 ```
+
+### `GET /categories/`:
+Gets every category of the user via `access_token` paginated, auth via `Bearer token` using the `access_token`.
+
+Authentication: Bearer Token
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2Nlc3MiLCJzdWIiOiJiMDNlMDlhZS04NTgyLTQyZWEtYTk1Yy0xZjJjNGJkMzU4MDIiLCJleHAiOjE3MDgxMjE5MzMsImlhdCI6MTcwODExODMzM30.n14uHTZZ2UhflG5mRG1Xxy1eYo0UPNgJ-0MRczQD0Sg
+```
+
+Body:
+```json
+{
+  "page": 1,
+  "page_size": 2
+}
+```
+
+Response:
+```json
+{
+  "total": 4,
+  "page": 1,
+  "page_size": 2,
+  "items": [
+    {
+      "ID": "96363d02-c080-40a2-b454-105e3f755d5b",
+      "Name": "Work"
+    },
+    {
+      "ID": "f8893fc2-a822-44c8-8e71-4e551ca16833",
+      "Name": "Personal"
+    }
+  ]
+}
+```
