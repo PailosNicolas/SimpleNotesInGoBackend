@@ -71,3 +71,11 @@ func GetNoteSliceDTO(notes []Note) []interface{} {
 	}
 	return result
 }
+
+func GetCategorySliceDTOs(categories []Category) []interface{} {
+	var result []interface{}
+	for _, dto := range categories {
+		result = append(result, dto.GetDTO())
+	}
+	return result
+}
