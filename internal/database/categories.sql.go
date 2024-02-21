@@ -59,3 +59,21 @@ func (q *Queries) GetCategoriesByUser(ctx context.Context, userID uuid.UUID) ([]
 	}
 	return items, nil
 }
+
+const getCategoryById = `-- name: GetCategoryById :one
+SELECT id, name, user_id
+FROM categories
+WHERE id=$1 AND user_id=$2
+`
+
+type GetCategoryByIdParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) GetCategoryById(ctx context.Context, arg GetCategoryByIdParams) (Category, error) {
+	row := q.db.QueryRowContext(ctx, getCategoryById, arg.ID, arg.UserID)
+	var i Category
+	err := row.Scan(&i.ID, &i.Name, &i.UserID)
+	return i, err
+}
