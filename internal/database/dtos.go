@@ -1,6 +1,7 @@
 package database
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -44,9 +45,25 @@ func (n *Note) GetDTO() interface{} {
 	}
 }
 
+type NoteWCategoryDTO struct {
+	Note     NoteDTO       `json:"note"`
+	Category []interface{} `json:"categories"`
+}
+
+func (n *GetNotesByUserRow) GetDTO() interface{} {
+	var categories []Category
+	if err := json.Unmarshal(n.Categories, &categories); err != nil {
+		return nil
+	}
+	return NoteWCategoryDTO{
+		Note:     n.Note.GetDTO().(NoteDTO),
+		Category: GetCategorySliceDTOs(categories),
+	}
+}
+
 type CategoryDTO struct {
-	ID   uuid.UUID
-	Name string
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }
 
 func (c *Category) GetDTO() interface{} {
@@ -75,6 +92,17 @@ func GetNoteSliceDTO(notes []Note) []interface{} {
 func GetCategorySliceDTOs(categories []Category) []interface{} {
 	var result []interface{}
 	for _, dto := range categories {
+		if dto.Name == "" {
+			continue
+		}
+		result = append(result, dto.GetDTO())
+	}
+	return result
+}
+
+func GetNoteWCategorySliceDTO(notes []GetNotesByUserRow) []interface{} {
+	var result []interface{}
+	for _, dto := range notes {
 		result = append(result, dto.GetDTO())
 	}
 	return result
