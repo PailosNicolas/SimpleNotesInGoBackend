@@ -66,3 +66,36 @@ func (cfg *apiConfig) HandlerGetCategory(w http.ResponseWriter, r *http.Request,
 
 	helpers.RespondWithJSON(w, http.StatusOK, paginatedNotes)
 }
+
+func (cfg *apiConfig) HandlerDeleteCategory(w http.ResponseWriter, r *http.Request, user database.User) {
+	type parameters struct {
+		CategoryID string `json:"category_id"`
+	}
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+
+	err := decoder.Decode(&params)
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error decoding parameters")
+		return
+	}
+
+	categoryUuid, err := uuid.Parse(params.CategoryID)
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error decoding parameters")
+		return
+	}
+
+	err = cfg.DB.DeleteCategoryById(r.Context(), database.DeleteCategoryByIdParams{
+		ID:     categoryUuid,
+		UserID: user.ID,
+	})
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error deleting categories")
+		return
+	}
+
+	helpers.RespondWithOK(w)
+}
