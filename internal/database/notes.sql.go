@@ -7,6 +7,7 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/google/uuid"
@@ -49,9 +50,11 @@ func (q *Queries) CreateNote(ctx context.Context, arg CreateNoteParams) (Note, e
 }
 
 const getNoteById = `-- name: GetNoteById :one
-SELECT id, title, body, user_id, created_at, updated_at
-FROM notes
-WHERE id=$1 AND user_id=$2
+SELECT n.id, n.title, n.body, n.user_id, n.created_at, n.updated_at, c.id, c.name, c.user_id
+FROM notes n
+LEFT JOIN note_categories nc ON nc.note_id = n.id
+LEFT JOIN categories c ON c.id = nc.category_id
+WHERE n.id = $1 AND n.user_id = $2
 `
 
 type GetNoteByIdParams struct {
@@ -59,43 +62,68 @@ type GetNoteByIdParams struct {
 	UserID uuid.UUID
 }
 
-func (q *Queries) GetNoteById(ctx context.Context, arg GetNoteByIdParams) (Note, error) {
+type GetNoteByIdRow struct {
+	Note     Note
+	Category Category
+}
+
+func (q *Queries) GetNoteById(ctx context.Context, arg GetNoteByIdParams) (GetNoteByIdRow, error) {
 	row := q.db.QueryRowContext(ctx, getNoteById, arg.ID, arg.UserID)
-	var i Note
+	var i GetNoteByIdRow
 	err := row.Scan(
-		&i.ID,
-		&i.Title,
-		&i.Body,
-		&i.UserID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
+		&i.Note.ID,
+		&i.Note.Title,
+		&i.Note.Body,
+		&i.Note.UserID,
+		&i.Note.CreatedAt,
+		&i.Note.UpdatedAt,
+		&i.Category.ID,
+		&i.Category.Name,
+		&i.Category.UserID,
 	)
 	return i, err
 }
 
 const getNotesByUser = `-- name: GetNotesByUser :many
-SELECT id, title, body, user_id, created_at, updated_at
-FROM notes
-WHERE user_id=$1
-ORDER BY created_at DESC
+SELECT
+  n.id, n.title, n.body, n.user_id, n.created_at, n.updated_at,
+  json_agg(c) as categories
+FROM
+  notes n
+LEFT JOIN
+  note_categories nc ON nc.note_id = n.id
+LEFT JOIN
+  categories c ON c.id = nc.category_id
+WHERE
+  n.user_id = $1
+GROUP BY
+  n.id
+ORDER BY
+  n.created_at DESC
 `
 
-func (q *Queries) GetNotesByUser(ctx context.Context, userID uuid.UUID) ([]Note, error) {
+type GetNotesByUserRow struct {
+	Note       Note
+	Categories json.RawMessage
+}
+
+func (q *Queries) GetNotesByUser(ctx context.Context, userID uuid.UUID) ([]GetNotesByUserRow, error) {
 	rows, err := q.db.QueryContext(ctx, getNotesByUser, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Note
+	var items []GetNotesByUserRow
 	for rows.Next() {
-		var i Note
+		var i GetNotesByUserRow
 		if err := rows.Scan(
-			&i.ID,
-			&i.Title,
-			&i.Body,
-			&i.UserID,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&i.Note.ID,
+			&i.Note.Title,
+			&i.Note.Body,
+			&i.Note.UserID,
+			&i.Note.CreatedAt,
+			&i.Note.UpdatedAt,
+			&i.Categories,
 		); err != nil {
 			return nil, err
 		}
