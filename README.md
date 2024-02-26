@@ -122,19 +122,28 @@ Response:
   "page_size": 2,
   "items": [
     {
-      "id": "3ffd00c9-016a-4b60-aa00-e6598eecdae1",
-      "title": "Note  2",
-      "body": "This is the note body 2",
-      "created_at": "2024-02-17T21:03:54.815386Z",
-      "updated_at": "2024-02-17T21:03:54.815386Z"
+      "note": {
+        "id": "3ffd00c9-016a-4b60-aa00-e6598eecdae1",
+        "title": "Note  2",
+        "body": "This is the note body 2",
+        "created_at": "2024-02-17T21:03:54.815386Z",
+        "updated_at": "2024-02-17T21:03:54.815386Z"
+      },
+      "categories": null
     },
     {
-      "id": "4d184f67-d7ce-4488-ae5f-873fc59fc429",
-      "title": "New note",
-      "body": "This is the new note body",
-      "created_at": "2024-02-17T20:08:12.332014Z",
-      "updated_at": "2024-02-17T20:08:23.12217Z"
-    }
+      "note": {
+        "id": "4d184f67-d7ce-4488-ae5f-873fc59fc429",
+        "title": "Another updated note",
+        "body": "This is the new note body",
+        "created_at": "2024-02-17T20:08:12.332014Z",
+        "updated_at": "2024-02-26T23:10:30.437139Z"
+      },
+      "categories": [
+        {
+          "id": "96363d02-c080-40a2-b454-105e3f755d5b",
+          "name": "Work"
+        }
   ]
 }
 ```
