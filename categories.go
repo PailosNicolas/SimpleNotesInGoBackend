@@ -99,3 +99,70 @@ func (cfg *apiConfig) HandlerDeleteCategory(w http.ResponseWriter, r *http.Reque
 
 	helpers.RespondWithOK(w)
 }
+
+func (cfg *apiConfig) HandlerAssingCategoryToNote(w http.ResponseWriter, r *http.Request, user database.User) {
+	type parameters struct {
+		CategoryID string `json:"category_id"`
+		NoteID     string `json:"note_id"`
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+
+	err := decoder.Decode(&params)
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error decoding parameters")
+		return
+	}
+
+	if params.CategoryID == "" || params.NoteID == "" {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Missing parameters.")
+		return
+	}
+
+	categoryUuid, err := uuid.Parse(params.CategoryID)
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error decoding parameters")
+		return
+	}
+
+	NoteUuid, err := uuid.Parse(params.NoteID)
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error decoding parameters")
+		return
+	}
+
+	category, err := cfg.DB.GetCategoryById(r.Context(), database.GetCategoryByIdParams{
+		ID:     categoryUuid,
+		UserID: user.ID,
+	})
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error assigning category")
+		return
+	}
+
+	note, err := cfg.DB.GetNoteById(r.Context(), database.GetNoteByIdParams{
+		ID:     NoteUuid,
+		UserID: user.ID,
+	})
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error assigning category")
+		return
+	}
+
+	_, err = cfg.DB.CreateNoteCategory(r.Context(), database.CreateNoteCategoryParams{
+		NoteID:     note.ID,
+		CategoryID: category.ID,
+	})
+
+	if err != nil {
+		helpers.RespondWithError(w, http.StatusInternalServerError, "Error assigning category")
+		return
+	}
+
+	helpers.RespondWithOK(w)
+}

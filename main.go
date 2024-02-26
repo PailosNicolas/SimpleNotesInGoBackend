@@ -52,6 +52,7 @@ func main() {
 	r.Post("/categories/", config.middlewareAuth(config.HandlerCreateCategory))
 	r.Get("/categories/", config.middlewareAuth(config.HandlerGetCategory))
 	r.Delete("/categories/", config.middlewareAuth(config.HandlerDeleteCategory))
+	r.Post("/categories/notes/", config.middlewareAuth(config.HandlerAssingCategoryToNote))
 
 	println("Server started on port: " + string(port))
 	log.Fatal(http.ListenAndServe(":"+port, r))
