@@ -196,3 +196,18 @@ Response:
   ]
 }
 ```
+
+### `DELETE /categories/`:
+Deletes a category by its id, auth via `Bearer token` using the `access_token`.
+
+Authentication: Bearer Token
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhY2Nlc3MiLCJzdWIiOiJiMDNlMDlhZS04NTgyLTQyZWEtYTk1Yy0xZjJjNGJkMzU4MDIiLCJleHAiOjE3MDgxMjE5MzMsImlhdCI6MTcwODExODMzM30.n14uHTZZ2UhflG5mRG1Xxy1eYo0UPNgJ-0MRczQD0Sg
+```
+
+Body:
+```json
+{
+  "category_id": "85ee81f8-c25b-4c45-8580-a3745f36ca2f"
+}
+```
