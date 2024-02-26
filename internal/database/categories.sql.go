@@ -30,6 +30,21 @@ func (q *Queries) CreateCategory(ctx context.Context, arg CreateCategoryParams) 
 	return i, err
 }
 
+const deleteCategoryById = `-- name: DeleteCategoryById :exec
+DELETE FROM categories
+WHERE id = $1 AND user_id = $2
+`
+
+type DeleteCategoryByIdParams struct {
+	ID     uuid.UUID
+	UserID uuid.UUID
+}
+
+func (q *Queries) DeleteCategoryById(ctx context.Context, arg DeleteCategoryByIdParams) error {
+	_, err := q.db.ExecContext(ctx, deleteCategoryById, arg.ID, arg.UserID)
+	return err
+}
+
 const getCategoriesByUser = `-- name: GetCategoriesByUser :many
 SELECT id, name, user_id
 FROM categories
