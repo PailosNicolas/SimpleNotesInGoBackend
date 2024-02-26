@@ -80,18 +80,18 @@ func (cfg *apiConfig) HandlerUpdateNote(w http.ResponseWriter, r *http.Request, 
 	}
 
 	if params.Body == "" {
-		params.Body = note.Body
+		params.Body = note.Note.Body
 	}
 
 	if params.Title == "" {
-		params.Title = note.Title
+		params.Title = note.Note.Title
 	}
 
 	updatedNote, err := cfg.DB.UpdateNoteTitleBody(r.Context(), database.UpdateNoteTitleBodyParams{
 		Title:     params.Title,
 		Body:      params.Body,
 		UpdatedAt: time.Now(),
-		ID:        note.ID,
+		ID:        note.Note.ID,
 	})
 
 	if err != nil {
@@ -119,7 +119,7 @@ func (cfg *apiConfig) HandlerGetNote(w http.ResponseWriter, r *http.Request, use
 		return
 	}
 
-	paginatedNotes := helpers.PaginateResult(database.GetNoteSliceDTO(notes), helpers.PaginationParams{
+	paginatedNotes := helpers.PaginateResult(database.GetNoteWCategorySliceDTO(notes), helpers.PaginationParams{
 		Page:     params.Page,
 		PageSize: params.PageSize,
 	})

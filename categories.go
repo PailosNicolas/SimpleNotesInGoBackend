@@ -155,7 +155,7 @@ func (cfg *apiConfig) HandlerAssingCategoryToNote(w http.ResponseWriter, r *http
 	}
 
 	_, err = cfg.DB.CreateNoteCategory(r.Context(), database.CreateNoteCategoryParams{
-		NoteID:     note.ID,
+		NoteID:     note.Note.ID,
 		CategoryID: category.ID,
 	})
 
