@@ -51,11 +51,12 @@ func (q *Queries) CreateNote(ctx context.Context, arg CreateNoteParams) (Note, e
 }
 
 const getNoteById = `-- name: GetNoteById :one
-SELECT n.id, n.title, n.body, n.user_id, n.created_at, n.updated_at, c.id, c.name, c.user_id
+SELECT n.id, n.title, n.body, n.user_id, n.created_at, n.updated_at, json_agg(c) as categories
 FROM notes n
 LEFT JOIN note_categories nc ON nc.note_id = n.id
 LEFT JOIN categories c ON c.id = nc.category_id
 WHERE n.id = $1 AND n.user_id = $2
+GROUP BY n.id
 `
 
 type GetNoteByIdParams struct {
@@ -64,8 +65,8 @@ type GetNoteByIdParams struct {
 }
 
 type GetNoteByIdRow struct {
-	Note     Note
-	Category Category
+	Note       Note
+	Categories json.RawMessage
 }
 
 func (q *Queries) GetNoteById(ctx context.Context, arg GetNoteByIdParams) (GetNoteByIdRow, error) {
@@ -78,9 +79,7 @@ func (q *Queries) GetNoteById(ctx context.Context, arg GetNoteByIdParams) (GetNo
 		&i.Note.UserID,
 		&i.Note.CreatedAt,
 		&i.Note.UpdatedAt,
-		&i.Category.ID,
-		&i.Category.Name,
-		&i.Category.UserID,
+		&i.Categories,
 	)
 	return i, err
 }

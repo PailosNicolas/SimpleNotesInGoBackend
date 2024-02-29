@@ -10,11 +10,12 @@ WHERE id = $4
 RETURNING *;
 
 -- name: GetNoteById :one
-SELECT sqlc.embed(n), sqlc.embed(c)
+SELECT sqlc.embed(n), json_agg(c) as categories
 FROM notes n
 LEFT JOIN note_categories nc ON nc.note_id = n.id
 LEFT JOIN categories c ON c.id = nc.category_id
-WHERE n.id = $1 AND n.user_id = $2;
+WHERE n.id = $1 AND n.user_id = $2
+GROUP BY n.id;
 
 -- name: GetNotesByUser :many
 SELECT
