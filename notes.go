@@ -104,7 +104,12 @@ func (cfg *apiConfig) HandlerUpdateNote(w http.ResponseWriter, r *http.Request, 
 
 func (cfg *apiConfig) HandlerGetNote(w http.ResponseWriter, r *http.Request, user database.User) {
 	decoder := json.NewDecoder(r.Body)
-	params := helpers.PaginationParams{}
+	var filterByCategoy bool = false
+	type parameters struct {
+		CategoriesUuid []uuid.UUID `json:"filter_by_category_uuid"`
+		helpers.PaginationParams
+	}
+	params := parameters{}
 
 	err := decoder.Decode(&params)
 	if err != nil {
@@ -112,7 +117,15 @@ func (cfg *apiConfig) HandlerGetNote(w http.ResponseWriter, r *http.Request, use
 		return
 	}
 
-	notes, err := cfg.DB.GetNotesByUser(r.Context(), user.ID)
+	if len(params.CategoriesUuid) > 0 {
+		filterByCategoy = true
+	}
+
+	notes, err := cfg.DB.GetNotesByUser(r.Context(), database.GetNotesByUserParams{
+		UserID:  user.ID,
+		Column2: filterByCategoy,
+		Column3: params.CategoriesUuid,
+	})
 
 	if err != nil {
 		helpers.RespondWithError(w, http.StatusInternalServerError, "Error getting notes")
