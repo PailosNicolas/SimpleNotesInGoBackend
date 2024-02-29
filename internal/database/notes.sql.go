@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 )
 
 const createNote = `-- name: CreateNote :one
@@ -96,19 +97,26 @@ LEFT JOIN
   categories c ON c.id = nc.category_id
 WHERE
   n.user_id = $1
+  AND ($2 IS FALSE OR nc.category_id = ANY($3::uuid[]))
 GROUP BY
   n.id
 ORDER BY
   n.created_at DESC
 `
 
+type GetNotesByUserParams struct {
+	UserID  uuid.UUID
+	Column2 interface{}
+	Column3 []uuid.UUID
+}
+
 type GetNotesByUserRow struct {
 	Note       Note
 	Categories json.RawMessage
 }
 
-func (q *Queries) GetNotesByUser(ctx context.Context, userID uuid.UUID) ([]GetNotesByUserRow, error) {
-	rows, err := q.db.QueryContext(ctx, getNotesByUser, userID)
+func (q *Queries) GetNotesByUser(ctx context.Context, arg GetNotesByUserParams) ([]GetNotesByUserRow, error) {
+	rows, err := q.db.QueryContext(ctx, getNotesByUser, arg.UserID, arg.Column2, pq.Array(arg.Column3))
 	if err != nil {
 		return nil, err
 	}

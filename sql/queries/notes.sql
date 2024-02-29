@@ -28,6 +28,7 @@ LEFT JOIN
   categories c ON c.id = nc.category_id
 WHERE
   n.user_id = $1
+  AND ($2 IS FALSE OR nc.category_id = ANY($3::uuid[]))
 GROUP BY
   n.id
 ORDER BY
