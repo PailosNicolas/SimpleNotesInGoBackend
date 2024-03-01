@@ -99,7 +99,7 @@ Response:
 ```
 
 ### `GET /notes/`:
-Gets every note of the user via `access_token` paginated, auth via `Bearer token` using the `access_token`.
+Gets every note of the user via `access_token` paginated, can filter by category uuid, auth via `Bearer token` using the `access_token`.
 
 Authentication: Bearer Token
 ```
@@ -110,7 +110,8 @@ Body:
 ```json
 {
   "page": 1,
-  "page_size": 2
+  "page_size": 2,
+  "filter_by_category_uuid": ["96363d02-c080-40a2-b454-105e3f755d5b"]
 }
 ```
 
@@ -119,17 +120,22 @@ Response:
 {
   "total": 2,
   "page": 1,
-  "page_size": 2,
+  "page_size": 5,
   "items": [
     {
       "note": {
-        "id": "3ffd00c9-016a-4b60-aa00-e6598eecdae1",
-        "title": "Note  2",
-        "body": "This is the note body 2",
-        "created_at": "2024-02-17T21:03:54.815386Z",
-        "updated_at": "2024-02-17T21:03:54.815386Z"
+        "id": "e41d9e0d-9b2f-43be-971b-bcfea9180068",
+        "title": "Testing note",
+        "body": "This is a note for testing",
+        "created_at": "2024-02-26T23:00:40.800129Z",
+        "updated_at": "2024-02-26T23:00:40.800129Z"
       },
-      "categories": null
+      "categories": [
+        {
+          "id": "96363d02-c080-40a2-b454-105e3f755d5b",
+          "name": "Work"
+        }
+      ]
     },
     {
       "note": {
@@ -144,6 +150,8 @@ Response:
           "id": "96363d02-c080-40a2-b454-105e3f755d5b",
           "name": "Work"
         }
+      ]
+    }
   ]
 }
 ```
