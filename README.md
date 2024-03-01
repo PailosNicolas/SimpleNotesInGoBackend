@@ -1,6 +1,7 @@
 # SimpleNotesInGoBackend
 This is a small project for getting used to work with go webservers, just a simple note taking backend.
-I wanted to learn how to user authenticate and make a simple CRUD
+I wanted to learn how to user authenticate, make a simple CRUD, handle pagination as well as filtered request.
+As far as I'm concerned this is done, maybe I'll add a dockerfile later.
 
 ## Endpoints
 ### `POST /users/`:
